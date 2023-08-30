@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{{movie}}</title>
+    <style>
+      table,
+      thead,
+      tbody,
+      td {
+        border: 1px solid gray;
+      }
+
+      thead {
+        font-weight: 600;
+      }
+    </style>
+  </head>
+  <body>
+    <nav>
+      <a href="{% url 'moviecharacters:index' %}">All movies</a>
+    </nav>
+    <div>
+      <h4>{{movie}} Characters</h4>
+      {% if characters %}
+      <!-- Display character -->
+      <table>
+        <thead>
+          <td>Name</td>
+          <td>Age</td>
+          <td>First Appearance</td>
+        </thead>
+        <tbody>
+          {% for character in characters %}
+          <tr>
+            <td>{{character.name}}</td>
+            <td>{{character.age}}</td>
+            <td>{{character.first_appearance}}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+
+      <!-- Paginator -->
+      <div class="pagination">
+        <span class="step-links">
+          {% if characters.has_previous %}
+          <a href="?page=1">&laquo; First</a>
+          <a href="?page={{page_obj.previous_page_number}}">Previous</a>
+          {% endif %}
+          <span class="current"
+            >Page
+            <!-- Current Page -->
+            {{characters.number}} of
+            <!-- Total Pages -->
+            {{characters.paginator.num_pages}}
+          </span>
+
+          <!-- Next Page -->
+          {% if characters.has_next %}
+          <a href="?page={{characters.next_page_number}}">Next</a>
+          <a href="?page={{characters.paginator.num_pages}}">Last &raquo;</a>
+          {% endif %}
+        </span>
+      </div>
+      <!-- End of Paginator -->
+      {% else %}
+      <h4>No characters found</h4>
+      {% endif %}
+    </div>
+  </body>
+</html>
