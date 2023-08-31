@@ -2,19 +2,17 @@
 from .models import Movie
 from .models import Character
 # import django tools
-from django.shortcuts import render
-from django.http import HttpResponse
-from django.http import JsonResponse
-from django.core.paginator import Paginator
 from django.views.decorators.csrf import csrf_exempt
 # import serializers and rest_framework tools
 from .serializers import MovieSerializer
 from .serializers import CharacterSerializer
-from rest_framework.parsers import JSONParser
+from rest_framework import status
+from rest_framework.response import Response
+from rest_framework.decorators import api_view
 
 
 # Create your views here.
-@csrf_exempt
+@api_view(http_method_names=['GET', 'POST'])
 def index(request):
     """
     get all movies or create a movie
@@ -22,28 +20,62 @@ def index(request):
     if request.method == 'GET':
         movies = Movie.objects.all()
         serializer = MovieSerializer(instance=movies, many=True)
-        return JsonResponse(serializer.data, safe=False)
+        return Response(data=serializer.data)
     
     elif request.method == 'POST':
-        data = JSONParser().parse(request)
-        serializer = MovieSerializer(data=data)
+        serializer = MovieSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
-            return JsonResponse(serializer.data, status=201)
-        return JsonResponse(serializer.errors, status=400)
+            return Response(data=serializer.data, status=status.HTTP_201_CREATED)
+        return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
-@csrf_exempt
+
+@api_view(http_method_names=['GET', 'POST'])
 def getCharacters(request, id):
+    """
+    Retrive movies, and send, update or delete
+    """
     if request.method == 'GET':
         characters = Character.objects.filter(movie=id)
         serializer = CharacterSerializer(instance=characters, many=True)
-        return JsonResponse(serializer.data, safe=False)
+        return Response(data=serializer.data)
     
     elif request.method == 'POST':
-        data = JSONParser().parse(request)
-        serializer = CharacterSerializer(data=data)
+        serializer = CharacterSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
-            return JsonResponse(serializer.data, status=201)
-        return JsonResponse(serializer.errors, status=400)
+            return Response(data=serializer.data, status=status.HTTP_201_CREATED)
+        return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(http_method_names=['GET', 'POST', 'PUT', 'DELETE'])
+def getSingleCharacter(request, id):
+    """
+    Retrive character, and send, update or delete
+    """
+    try:
+        character = Character.objects.get(id=id)
+    except Character.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+        
+    if request.method == 'GET':
+        serializer = CharacterSerializer(instance=character)
+        return Response(data=serializer.data)
     
+    elif request.method == 'POST':
+        serializer = CharacterSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(data=serializer.data, status=status.HTTP_201_CREATED)
+        return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    elif request.method == 'PUT':
+        serializer = CharacterSerializer(instance=character, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(data=serializer.data)
+        return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    elif request.method == 'DELETE':
+        character.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)

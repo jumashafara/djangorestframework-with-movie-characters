@@ -6,5 +6,6 @@ app_name = 'moviecharacters'
 
 urlpatterns = [
     path('', views.index, name='index'),
-    path('characters<int:id>', views.getCharacters, name='characters'),
+    path('character/<int:id>', views.getSingleCharacter, name='character'),
+    path('characters/<int:id>', views.getCharacters, name='characters'),
 ]

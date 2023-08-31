@@ -11,4 +11,4 @@ class MovieSerializer(serializers.ModelSerializer):
 class CharacterSerializer(serializers.ModelSerializer):
     class Meta:
         model = Character
-        fields = ['id', 'name', 'age', 'first_appearance']
+        fields = ['id', 'movie','name', 'age', 'first_appearance']

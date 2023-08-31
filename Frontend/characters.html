@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Movie Characters</title>
+    <script src="js/characters.js" defer></script>
+    <style>
+      table,
+      thead,
+      tbody,
+      td {
+        border: 1px solid gray;
+      }
+
+      thead {
+        font-weight: 600;
+      }
+    </style>
+  </head>
+  <body>
+    <nav>
+      <a href="index.html">All movies</a>
+    </nav>
+    <div>
+      <h4></h4>
+      <!-- Display character -->
+      <table>
+        <thead>
+          <td>Name</td>
+          <td>Age</td>
+          <td>First Appearance</td>
+        </thead>
+        <tbody class="characters-tbody"></tbody>
+      </table>
+      <div class="error"></div>
+    </div>
+  </body>
+</html>
